@@ -9,28 +9,48 @@ class Register extends Component{
         this.state = {
             idkey:"",
             firstname:"",
-            lastname:""
+            lastname:"",
+            com:"",
+            data:[]
         }
         this.handleChang = this.handleChang.bind(this);
         this.handleClicked = this.handleClicked.bind(this);
     }
+
+    componentDidMount = () => {
+        this.getData();
+      }
+    
+      getData = () => {
+        axios.get('/api/com').then(res => {
+          this.setState({
+            data: res.data
+          })
+        })
+      }
+
     handleChang = (e) => {
         this.setState({
             [e.target.id]: e.target.value
         });
+        console.log(this.state)
     }
     handleClicked(){
         let url = `https://localhost:3000/data`;
         let data = {
             idkey:this.state.idkey,
             firstname:this.state.firstname,
-            lastname:this.state.lastname
+            lastname:this.state.lastname,
+            email:localStorage.getItem('email'),
+            model:this.state.com
         }
+        console.log(data)
         axios.post(url,data)
         this.setState({
             idkey:"",
             firstname:"",
-            lastname:""
+            lastname:"",
+            com:""
         });
         this.props.history.push('/Showdata');
     }
@@ -55,6 +75,12 @@ class Register extends Component{
                         <label className="text-white"  htmlFor="id">Id</label>
                         <input type="text" className="form-control" size="10" id="idkey" onChange={this.handleChang} value={this.state.idkey}/>
                     </div>
+                    <select class="form-control" id="com" value={this.state.com} onChange={this.handleChang} required>
+                        <option value="" >Select Spec</option>
+                        {this.state.data.map(item => {
+                        return <option value={item.model}>&emsp;model : {item.model} &emsp;speed : {item.speed} &emsp;ram : {item.ram} &emsp;storage : {item.hd} &emsp;price : {item.price}</option>
+                        })}
+                    </select>
                     <button type="button" className="btn btn-primary" onClick={this.handleClicked}>Submit</button>
                 </form>
             </div>

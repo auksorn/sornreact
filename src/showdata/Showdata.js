@@ -12,7 +12,9 @@ export default class Showdata extends Component{
             list:[],
             idkey:"",
             firstname:"",
-            lastname:""
+            lastname:"",
+            comdata:[],
+            com:""
         }
         this.handleChang = this.handleChang.bind(this);
         this.handleClicked = this.handleClicked.bind(this);
@@ -28,6 +30,9 @@ export default class Showdata extends Component{
         fetch('/data')
             .then(res => res.json())
             .then(list => this.setState({ list }))
+        fetch('/api/com')
+            .then(res => res.json())
+            .then(list => this.setState({ comdata: list }))
         console.log("after fetch data");
     }
 
@@ -56,20 +61,14 @@ export default class Showdata extends Component{
         this.setState({
             idkey:user.id,
             firstname:user.firstname,
-            lastname:user.lastname
+            lastname:user.lastname,
+            com:user.model
         })
     }
     handleChang = (e) => {
         this.setState({
             [e.target.id]: e.target.value
         });
-        let url = `https://localhost:3000/data`;
-        let data = {
-            idkey:this.state.idkey,
-            firstname:this.state.firstname,
-            lastname:this.state.lastname
-        }
-        axios.put(url,data)
     }
 
     handleClicked(){
@@ -77,7 +76,8 @@ export default class Showdata extends Component{
         let data = {
             idkey:this.state.idkey,
             firstname:this.state.firstname,
-            lastname:this.state.lastname
+            lastname:this.state.lastname,
+            com:this.state.com
         }
         axios.put(url,data)
         this.setState({
@@ -102,6 +102,8 @@ export default class Showdata extends Component{
                             <th>ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
+                            <th>Create By</th>
+                            <th>Spec</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,8 +111,16 @@ export default class Showdata extends Component{
                                     return(
                                         <tr>
                                             <td>{user.id}</td>
-                                            <td>{user.firstname}</td>
-                                            <td>{user.lastname}</td>
+                                            <td align="left">{user.firstname}</td>
+                                            <td align="left">{user.lastname}</td>
+                                            <td>{user.email}</td>
+                                            <td align="left">
+                                                Model : {user.model}<br/>
+                                                Speed : {user.speed}<br/>
+                                                Ram &nbsp;&nbsp;: {user.ram}<br/>
+                                                HDD &nbsp;: {user.hd}<br/>
+                                                Price : {user.price}<br/>
+                                            </td>
                                             <td><button type="button" class="btn btn-warning" onClick={()=>this.call(user)}>Edit</button></td>
                                             <td><button type="button" class="btn btn-danger"  onClick={()=>this.onDelete(user)}>Delet</button></td>
                                             <div className="box">
@@ -132,6 +142,12 @@ export default class Showdata extends Component{
                                                             <label>lasttname:</label>
                                                             <input type="text" className="form-control" id="lastname" onChange={this.handleChang} value={this.state.lastname}/>
                                                         </div>
+                                                        <select class="form-control" id="com" value={this.state.com} onChange={this.handleChang} required>
+                                                            <option value="" >Select Spec</option>
+                                                            {this.state.comdata.map(item => {
+                                                            return <option value={item.model}>&emsp;model : {item.model} &emsp;speed : {item.speed} &emsp;ram : {item.ram} &emsp;storage : {item.hd} &emsp;price : {item.price}</option>
+                                                            })}
+                                                        </select>
                                                         <button type="button" className="btn btn-primary" onClick={this.handleClicked}>Submit</button>
                                                     </form>
                                                 </Modal>

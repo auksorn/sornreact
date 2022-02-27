@@ -18,15 +18,25 @@ app.use(body());
 app.use(express.static(path.resolve(__dirname, '..', 'build')));
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
+    host: '172.22.16.1',
+    user: 'sorn',
     password: '1234',
-    database: 'testing'
+    database: 'test'
 });
 // show data
 app.get('/data', function(req,res){
     console.log("Hello in /data ");
-    let sql = 'SELECT * FROM users;';
+    let sql = 'SELECT * FROM users, pc where users.model = pc.model;';
+    db.query(sql, (err, result)=>{
+        if(err) throw err;
+        console.log(result);
+        res.json(result);
+    });
+    console.log("after query");
+});
+
+app.get('/api/com', function(req,res){
+    let sql = 'SELECT * FROM pc;';
     db.query(sql, (err, result)=>{
         if(err) throw err;
         console.log(result);
@@ -46,8 +56,9 @@ app.put('/delete', function(req, res) {
 
 //edit
 app.put('/data', function(req, res) {
-    var sql = 'UPDATE users SET firstname= ? , lastname = ? WHERE id = ?';
-    db.query(sql,[req.body.firstname,req.body.lastname,req.body.idkey],function (error, results) {
+    console.log(req.body)
+    var sql = 'UPDATE users SET firstname= ? , lastname = ?, model = ? WHERE id = ?';
+    db.query(sql,[req.body.firstname,req.body.lastname,req.body.com,req.body.idkey],function (error, results) {
         if(error) throw error;
         res.send(JSON.stringify(results));
     });
@@ -59,7 +70,9 @@ app.post('/data', function(req, res){
     let data = {
         id:req.body.idkey,
         firstname:req.body.firstname,
-        lastname:req.body.lastname
+        lastname:req.body.lastname,
+        email:req.body.email,
+        model:req.body.model
     };
     let sql = 'INSERT INTO users SET ?';
     db.query(sql, data, (err, result)=>{
