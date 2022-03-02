@@ -18,7 +18,7 @@ app.use(body());
 app.use(express.static(path.resolve(__dirname, '..', 'build')));
 
 const db = mysql.createConnection({
-    host: '172.22.16.1',
+    host: '172.17.48.1',
     user: 'sorn',
     password: '1234',
     database: 'test'
