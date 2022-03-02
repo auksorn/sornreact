@@ -104,6 +104,7 @@ export default class Showdata extends Component{
                             <th>Last Name</th>
                             <th>Create By</th>
                             <th>Spec</th>
+                            <th>Create Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -121,6 +122,7 @@ export default class Showdata extends Component{
                                                 HDD &nbsp;: {user.hd}<br/>
                                                 Price : {user.price}<br/>
                                             </td>
+                                            <td>{user.time_stamp}</td>
                                             <td><button type="button" class="btn btn-warning" onClick={()=>this.call(user)}>Edit</button></td>
                                             <td><button type="button" class="btn btn-danger"  onClick={()=>this.onDelete(user)}>Delet</button></td>
                                             <div className="box">
